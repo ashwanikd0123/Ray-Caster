@@ -66,7 +66,7 @@ const player = {
     x: width / 2,
     y: height / 2,
     angle: -Math.PI / 2,
-    speed: 1.5,
+    speed: 1.0,
     rotationSpeed: 0.05
 }
 
@@ -96,11 +96,11 @@ function update() {
 // draw function
 function draw() {
     cleanCanvas(context)
-    
+
     // draw player
     context.fillStyle = "white"
     context.beginPath()
-    context.arc(player.x, player.y, 2, 0, Math.PI * 2)
+    context.arc(player.x, player.y, 2, 0, Math.PI * 2 )
     context.fill()
 }
 
@@ -108,7 +108,6 @@ function draw() {
 function loop() {
     update()
     draw()
-    requestAnimationFrame(loop)
 }
 
-loop()
+requestAnimationFrame(loop)
