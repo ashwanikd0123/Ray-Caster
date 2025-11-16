@@ -11,9 +11,7 @@
     <div class="canvas-container">
         <canvas id="main-canvas" width="500" height="500"></canvas>
         <canvas id="view-canvas" width="500" height="500"></canvas>
-    </div>
-
-    <div class="control-container">
+        <div class="control-container" width="500" height="500">
         <ul class="control-list">
             <li>
                 <h2>Toggle Fisheye Correction </h2>
@@ -33,6 +31,8 @@
 
             <li>
                 <h2>Field of View </h2>
+            </li>
+            <li style="flex-direction: column; align-items: flex-start;">
                 <input type="range" id="fov" min="45" max="180" value="45">
                 <p>Value: <span id="fov-value">50</span></p>
             </li>
@@ -40,6 +40,9 @@
 
         <button id="reset-map-button">Randomize Map</button>
     </div>
+    </div>
+
+    
 
     <script
         src="https://code.jquery.com/jquery-3.7.1.js"

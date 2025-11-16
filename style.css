@@ -6,62 +6,104 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to bottom, #e66465, #9198e5);
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #ffffff;
 }
 
 h1 {
-    margin: 8px;
-    padding: 8px;
-    font-size: 3rem;
+    margin: 16px;
+    padding: 12px;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #00d4ff 0%, #00f0ff 50%, #00d4ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .canvas-container {
     display: flex;
     gap: 16px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 button {
-    padding: 8px 16px;
+    padding: 12px 24px;
     font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
     border: none;
     border-radius: 8px;
-    background-color: #e66465;
+    background-color: #00d4ff;
+    color: #1e3c72;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+button:hover {
+    background-color: #00e5ff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 212, 255, 0.4);
 }
 
 #main-canvas {
     width: 400px;
     height: 400px;
+    border-radius: 12px;
+    background-color: #000000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 #view-canvas {
     width: 400px;
     height: 400px;
+    border-radius: 12px;
+    background-color: #000000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
 }
 
 .control-container {
-    margin-top: 8px;
-    padding: 8px;
+    width: 400px;
+    height: 400px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(10px);
+    gap: 16px;
+    justify-content: space-between;
+    box-sizing: border-box;
 }
 
 ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
 li {
-    margin: 0px;
-    padding: 0px;
+    margin: 12px 0;
+    padding: 8px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 10px;
+    gap: 16px;
 }
 
 h2 {
-    margin: 8px;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 500;
+    min-width: 200px;
 }
 
 /* The switch - the box around the slider */
@@ -79,7 +121,7 @@ h2 {
   height: 0;
 }
 
-/* The slider */
+/* Slider styling for checkbox */
 .slider {
   position: absolute;
   cursor: pointer;
@@ -87,7 +129,7 @@ h2 {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: #555;
   -webkit-transition: .4s;
   transition: .4s;
 }
@@ -99,17 +141,17 @@ h2 {
   width: 26px;
   left: 4px;
   bottom: 4px;
-  background-color: white;
+  background-color: #ffffff;
   -webkit-transition: .4s;
   transition: .4s;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #00d4ff;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #00d4ff;
 }
 
 input:checked + .slider:before {
@@ -125,4 +167,75 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/* Basic styling for the range input */
+#fov {
+    width: 200px;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 4px;
+}
+
+/* Styling the thumb for WebKit browsers */
+#fov::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #00d4ff;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+}
+
+/* Styling the thumb for Firefox */
+#fov::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #00d4ff;
+    cursor: pointer;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0, 212, 255, 0.3);
+}
+
+p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #ffffff;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    body {
+        height: auto;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .canvas-container {
+        flex-direction: column;
+        width: 100%;
+        max-width: 500px;
+    }
+
+    #main-canvas,
+    #view-canvas {
+        width: 100%;
+        max-width: 400px;
+    }
+
+    .control-container {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        min-height: 300px;
+    }
 }
