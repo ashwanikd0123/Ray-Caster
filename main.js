@@ -5,7 +5,7 @@ function print(msg) {
 
 function cleanCanvas(context) {
     context.fillStyle = "black"
-    context.fillRect(0, 0, width, height)
+    context.fillRect(0, 0, WIDTH, HEIGHT)
 }
 
 // get canvas element
@@ -13,8 +13,8 @@ var mainCanvas = $("#main-canvas")[0]
 var viewCanvas = $("#view-canvas")[0]
 
 // get width and height from canvas
-const width = mainCanvas.width
-const height = mainCanvas.height
+const WIDTH = mainCanvas.width
+const HEIGHT = mainCanvas.height
 
 // get context from canvas
 var mainContext = mainCanvas.getContext("2d")
@@ -80,10 +80,10 @@ const MAP_WIDTH = 10;
 const MAP_HEIGHT = 10;
 
 function getTileSize() {
-    if (width < height) {
-        return Math.floor(width / MAP_WIDTH)
+    if (WIDTH < HEIGHT) {
+        return Math.floor(WIDTH / MAP_WIDTH)
     }
-    return Math.floor(height / MAP_HEIGHT)
+    return Math.floor(HEIGHT / MAP_HEIGHT)
 }
 
 const TILE_SIZE = getTileSize();
@@ -99,9 +99,13 @@ const player = {
 const playerColor = "yellow"
 const playerLineColor = "yellow"
 
-const wallColor = "gray"
+const wallColor = "white"
 
-const playerlineLen = 10
+const playerlineLen = 20
+const playerRadius = 5
+
+const FOV = Math.PI / 3;        // 60 deg
+const NUM_RAYS = WIDTH;     // 1 ray per column (simple)
 
 // check if position is wall
 function isWall(x, y) {
@@ -142,13 +146,12 @@ function update() {
     }
 
     if (player.x < 0) player.x = 0;
-    if (player.x > width) player.x = width;
+    if (player.x > WIDTH) player.x = WIDTH;
     if (player.y < 0) player.y = 0;
-    if (player.y > height) player.y = height;
+    if (player.y > HEIGHT) player.y = HEIGHT;
 }
 
-// draw function
-function draw() {
+function drawMainContent() {
     cleanCanvas(mainContext)
 
     // draw walls
@@ -169,7 +172,7 @@ function draw() {
     // draw player
     mainContext.fillStyle = playerColor
     mainContext.beginPath()
-    mainContext.arc(player.x, player.y, 2, 0, Math.PI * 2 )
+    mainContext.arc(player.x, player.y, playerRadius, 0, Math.PI * 2 )
     mainContext.fill()
 
     // draw player direction line
@@ -181,10 +184,64 @@ function draw() {
         player.y + Math.sin(player.angle) * playerlineLen
     )
     mainContext.stroke()
+}
 
-    // draw view canvas border
-    cleanCanvas(viewContext)
+function castRay(angle) {
+    const MAX_DEPTH = TILE_SIZE * MAP_WIDTH * 2;
+    const stepSize = 1;
+
+    let dist = 0;
+    let hitX = player.x;
+    let hitY = player.y;
+
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
     
+    while (dist < MAX_DEPTH) {
+        hitX = player.x + cos * dist;
+        hitY = player.y + sin * dist;
+
+        if (isWall(hitX, hitY)) {
+            break;
+        }
+
+        dist += stepSize;
+    }
+
+    return dist;
+}
+
+function drawViewContent() {
+    cleanCanvas(viewContext)
+
+    const startAngle = player.angle - FOV / 2;
+    const angleStep = FOV / NUM_RAYS;
+
+    for (let ray = 0; ray < NUM_RAYS; ray++) {
+        const rayAngle = startAngle + ray * angleStep;
+        const dist = castRay(rayAngle); // get distance to wall
+
+        // correct fisheye distortion effect
+        const correctedDist = dist * Math.cos(rayAngle - player.angle);
+        const lineHeight = (TILE_SIZE * HEIGHT) / correctedDist;
+
+        const columnX = ray; // 1 column per ray
+        const columnHeight =  Math.min(lineHeight, HEIGHT);
+        const columnY = (HEIGHT - columnHeight) / 2;
+
+        let shade = 255 - Math.min(255, Math.floor(correctedDist * 0.5));
+        viewContext.fillStyle = `rgb(${shade}, ${shade}, ${shade})`;
+        viewContext.fillRect(columnX, columnY, 1, columnHeight);
+    }
+
+}
+
+// draw function
+function draw() {
+    // draw left canvas
+    drawMainContent()
+    // draw right canvas
+    drawViewContent()
 }
 
 // animation loop
