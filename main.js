@@ -31,15 +31,19 @@ const keyPress = {
 $(document).keydown(function(event) {
     switch (event.key) {
         case "w":
+        case "ArrowUp":
             keyPress.up = true
             break
         case "s":
+        case "ArrowDown":
             keyPress.down = true
             break
         case "a":
+        case "ArrowLeft":
             keyPress.left = true
             break
         case "d":
+        case "ArrowRight":
             keyPress.right = true
             break
     }
@@ -48,15 +52,19 @@ $(document).keydown(function(event) {
 $(document).keyup(function(event) {
     switch (event.key) {
         case "w":
+        case "ArrowUp":
             keyPress.up = false
             break
         case "s":
+        case "ArrowDown":
             keyPress.down = false
             break
         case "a":
+        case "ArrowLeft":
             keyPress.left = false
             break
         case "d":
+        case "ArrowRight":
             keyPress.right = false
             break
     }
