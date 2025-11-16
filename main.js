@@ -208,7 +208,25 @@ function castRay(angle) {
         dist += stepSize;
     }
 
-    return dist;
+    return {dist, hitX, hitY};
+}
+
+// optional debug rays on top-down map
+function drawRaysOnMap() {
+    const startAngle = player.angle - FOV / 2;
+    const angleStep = FOV / NUM_RAYS;
+
+    
+    for (let i = 0; i < NUM_RAYS; i += 4) { // skip some for clarity
+        const rayAngle = startAngle + i * angleStep;
+        const { hitX, hitY } = castRay(rayAngle);
+
+        mainContext.strokeStyle = "green";
+        mainContext.beginPath();
+        mainContext.moveTo(player.x, player.y);
+        mainContext.lineTo(hitX, hitY);
+        mainContext.stroke();
+    }
 }
 
 function drawViewContent() {
@@ -219,7 +237,7 @@ function drawViewContent() {
 
     for (let ray = 0; ray < NUM_RAYS; ray++) {
         const rayAngle = startAngle + ray * angleStep;
-        const dist = castRay(rayAngle); // get distance to wall
+        const { dist } = castRay(rayAngle); // get distance to wall
 
         // correct fisheye distortion effect
         const correctedDist = dist * Math.cos(rayAngle - player.angle);
@@ -240,6 +258,7 @@ function drawViewContent() {
 function draw() {
     // draw left canvas
     drawMainContent()
+    drawRaysOnMap()
     // draw right canvas
     drawViewContent()
 }
