@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <h1>Ray Caster Demo</h1>
     <div class="canvas-container">
         <canvas id="main-canvas" width="500" height="500"></canvas>
         <canvas id="view-canvas" width="500" height="500"></canvas>
@@ -15,13 +16,29 @@
     <div class="control-container">
         <ul class="control-list">
             <li>
-                <h2> Toggle Fisheye Correction </h2>
+                <h2>Toggle Fisheye Correction </h2>
                 <label class="switch">
                     <input id="fish-eye-checkbox" type="checkbox">
                     <span class="slider round"></span>
                 </label>
             </li>
+
+            <li>
+                <h2>Toggle Shading </h2>
+                <label class="switch">
+                    <input id="shading-checkbox" type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </li>
+
+            <li>
+                <h2>Field of View </h2>
+                <input type="range" id="fov" min="45" max="180" value="45">
+                <p>Value: <span id="fov-value">50</span></p>
+            </li>
         </ul>
+
+        <button id="reset-map-button">Randomize Map</button>
     </div>
 
     <script

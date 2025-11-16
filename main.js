@@ -8,8 +8,6 @@ function cleanCanvas(context) {
     context.fillRect(0, 0, WIDTH, HEIGHT)
 }
 
-var fishEyeCorrection = true
-
 // get canvas element
 var mainCanvas = $("#main-canvas")[0]
 var viewCanvas = $("#view-canvas")[0]
@@ -106,7 +104,7 @@ const wallColor = "white"
 const playerlineLen = 20
 const playerRadius = 5
 
-const FOV = Math.PI / 3;        // 60 deg
+var fov = Math.PI / 3;        // 60 deg
 const NUM_RAYS = WIDTH;     // 1 ray per column (simple)
 
 // check if position is wall
@@ -215,8 +213,8 @@ function castRay(angle) {
 
 // optional debug rays on top-down map
 function drawRaysOnMap() {
-    const startAngle = player.angle - FOV / 2;
-    const angleStep = FOV / NUM_RAYS;
+    const startAngle = player.angle - fov / 2;
+    const angleStep = fov / NUM_RAYS;
 
     
     for (let i = 0; i < NUM_RAYS; i += 4) { // skip some for clarity
@@ -231,11 +229,14 @@ function drawRaysOnMap() {
     }
 }
 
+var fishEyeCorrection = true
+var shadingEnabled = true;
+
 function drawViewContent() {
     cleanCanvas(viewContext)
 
-    const startAngle = player.angle - FOV / 2;
-    const angleStep = FOV / NUM_RAYS;
+    const startAngle = player.angle - fov / 2;
+    const angleStep = fov / NUM_RAYS;
 
     for (let ray = 0; ray < NUM_RAYS; ray++) {
         const rayAngle = startAngle + ray * angleStep;
@@ -255,6 +256,9 @@ function drawViewContent() {
 
         let shade = 255 - Math.min(255, Math.floor(correctedDist * 0.5));
         viewContext.fillStyle = `rgb(${shade}, ${shade}, ${shade})`;
+        if (!shadingEnabled) {
+            viewContext.fillStyle = wallColor;
+        }
         viewContext.fillRect(columnX, columnY, 1, columnHeight);
     }
 }
@@ -282,3 +286,40 @@ loop()
 $("#fish-eye-checkbox").change(function() {
     fishEyeCorrection = this.checked
 })
+
+$("#fish-eye-checkbox").prop("checked", fishEyeCorrection)
+
+$("#shading-checkbox").change(function() {
+    shadingEnabled = this.checked
+})
+
+$("#shading-checkbox").prop("checked", shadingEnabled)
+
+function randomizeMap() {
+    for (let r = 1; r < MAP_HEIGHT - 1; r++) {
+        for (let c = 1; c < MAP_WIDTH - 1; c++) {
+            if (r === Math.floor(player.y / TILE_SIZE) && c === Math.floor(player.x / TILE_SIZE)) {
+                worldMap[r][c] = 0; // ensure player position is empty
+            }
+            worldMap[r][c] = Math.random() < 0.3 ? 1 : 0; // 30% chance of wall
+        }   
+    }
+}
+
+$("#reset-map-button").click(function() {
+    randomizeMap()
+})
+
+const slider = document.getElementById("fov");
+const output = document.getElementById("fov-value");
+
+slider.value = fov * (180 / Math.PI);
+
+// Display the initial slider value
+output.innerHTML = slider.value;
+
+// Update the output as the slider value changes
+slider.oninput = function() {
+  output.innerHTML = this.value;
+  fov = (this.value * Math.PI) / 180; // convert degrees to radians
+}
