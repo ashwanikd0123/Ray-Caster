@@ -86,7 +86,7 @@ function getTileSize() {
     return Math.floor(height / MAP_HEIGHT)
 }
 
-const TILE_SIZE = width / MAP_WIDTH;
+const TILE_SIZE = getTileSize();
 
 const player = {
     x: TILE_SIZE * 2.5,
