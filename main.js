@@ -62,27 +62,72 @@ $(document).keyup(function(event) {
 })
 
 // adding elements
+
+const MAP_WIDTH = 10;
+const MAP_HEIGHT = 10;
+const TILE_SIZE = 10;
+
 const player = {
-    x: width / 2,
-    y: height / 2,
+    x: TILE_SIZE * 2.5,
+    y: TILE_SIZE * 2.5,
     angle: -Math.PI / 2,
     speed: 1.0,
     rotationSpeed: 0.05
 }
 
+const playerColor = "yellow"
+const playerLineColor = "yellow"
+
+const wallColor = "gray"
+
+const playerlineLen = 10
+
+const worldMap = [
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,0,1,0,0,0,1,0,1],
+  [1,0,0,1,0,0,0,1,0,1],
+  [1,0,0,0,0,1,0,0,0,1],
+  [1,0,0,0,0,1,0,0,0,1],
+  [1,0,0,0,0,0,0,1,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1],
+];
+
+function isWall(x, y) {
+    const tileX = Math.floor(x / TILE_SIZE);
+    const tileY = Math.floor(y / TILE_SIZE);
+    if (tileX < 0 || tileX >= MAP_WIDTH || tileY < 0 || tileY >= MAP_HEIGHT) {
+        return true;
+    }
+    return worldMap[tileY][tileX] === 1;
+}
+
 // update player position
 function update() {
     if (keyPress.up) {
-        player.x += Math.cos(player.angle) * player.speed
-        player.y += Math.sin(player.angle) * player.speed
+        const nextX = player.x + Math.cos(player.angle) * player.speed;
+        const nextY = player.y + Math.sin(player.angle) * player.speed;
+        if (!isWall(nextX, nextY)) {
+            player.x = nextX;
+            player.y = nextY;
+        }
     }
+    
     if (keyPress.down) {
-        player.x -= Math.cos(player.angle) * player.speed
-        player.y -= Math.sin(player.angle) * player.speed
+        const nextX = player.x - Math.cos(player.angle) * player.speed;
+        const nextY = player.y - Math.sin(player.angle) * player.speed;
+        if (!isWall(nextX, nextY)) {
+            player.x = nextX;
+            player.y = nextY;
+        }
     }
+
     if (keyPress.left) {
         player.angle -= player.rotationSpeed
     }
+
     if (keyPress.right) {
         player.angle += player.rotationSpeed
     }
@@ -97,17 +142,45 @@ function update() {
 function draw() {
     cleanCanvas(context)
 
+    // draw walls
+    context.fillStyle = wallColor
+    for (let r = 0; r < MAP_HEIGHT; r++) {
+        for (let c = 0; c < MAP_WIDTH; c++) {
+            if (worldMap[r][c] === 1) {
+                context.fillRect(
+                    c * TILE_SIZE,
+                    r * TILE_SIZE,
+                    TILE_SIZE,
+                    TILE_SIZE
+                )
+            }
+        }
+    }
+
     // draw player
-    context.fillStyle = "white"
+    context.fillStyle = playerColor
     context.beginPath()
     context.arc(player.x, player.y, 2, 0, Math.PI * 2 )
     context.fill()
+
+    // draw player direction line
+    context.strokeStyle = playerLineColor
+    context.beginPath()
+    context.moveTo(player.x, player.y)
+    context.lineTo(
+        player.x + Math.cos(player.angle) * playerlineLen,
+        player.y + Math.sin(player.angle) * playerlineLen
+    )
+    context.stroke()
+
+    
 }
 
 // animation loop
 function loop() {
     update()
     draw()
+    requestAnimationFrame(loop)
 }
 
-requestAnimationFrame(loop)
+loop()
