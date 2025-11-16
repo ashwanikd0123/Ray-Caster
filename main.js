@@ -9,15 +9,16 @@ function cleanCanvas(context) {
 }
 
 // get canvas element
-var canvas = $("#main-canvas")[0]
+var mainCanvas = $("#main-canvas")[0]
+var viewCanvas = $("#view-canvas")[0]
 
 // get width and height from canvas
-const width = canvas.width
-const height = canvas.height
+const width = mainCanvas.width
+const height = mainCanvas.height
 
 // get context from canvas
-var context = canvas.getContext("2d")
-cleanCanvas(context)
+var mainContext = mainCanvas.getContext("2d")
+var viewContext = viewCanvas.getContext("2d")
 
 const keyPress = {
     up: false,
@@ -62,10 +63,30 @@ $(document).keyup(function(event) {
 })
 
 // adding elements
+const worldMap = [
+  [1,1,1,1,1,1,1,1,1,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,0,1,0,0,0,1,0,1],
+  [1,0,0,1,0,0,0,1,0,1],
+  [1,0,0,0,0,1,0,0,0,1],
+  [1,0,0,0,0,1,0,0,0,1],
+  [1,0,0,0,0,0,0,1,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,0,0,0,0,0,0,0,0,1],
+  [1,1,1,1,1,1,1,1,1,1],
+];
 
 const MAP_WIDTH = 10;
 const MAP_HEIGHT = 10;
-const TILE_SIZE = 10;
+
+function getTileSize() {
+    if (width < height) {
+        return Math.floor(width / MAP_WIDTH)
+    }
+    return Math.floor(height / MAP_HEIGHT)
+}
+
+const TILE_SIZE = width / MAP_WIDTH;
 
 const player = {
     x: TILE_SIZE * 2.5,
@@ -82,19 +103,7 @@ const wallColor = "gray"
 
 const playerlineLen = 10
 
-const worldMap = [
-  [1,1,1,1,1,1,1,1,1,1],
-  [1,0,0,0,0,0,0,0,0,1],
-  [1,0,0,1,0,0,0,1,0,1],
-  [1,0,0,1,0,0,0,1,0,1],
-  [1,0,0,0,0,1,0,0,0,1],
-  [1,0,0,0,0,1,0,0,0,1],
-  [1,0,0,0,0,0,0,1,0,1],
-  [1,0,0,0,0,0,0,0,0,1],
-  [1,0,0,0,0,0,0,0,0,1],
-  [1,1,1,1,1,1,1,1,1,1],
-];
-
+// check if position is wall
 function isWall(x, y) {
     const tileX = Math.floor(x / TILE_SIZE);
     const tileY = Math.floor(y / TILE_SIZE);
@@ -114,7 +123,7 @@ function update() {
             player.y = nextY;
         }
     }
-    
+
     if (keyPress.down) {
         const nextX = player.x - Math.cos(player.angle) * player.speed;
         const nextY = player.y - Math.sin(player.angle) * player.speed;
@@ -140,14 +149,14 @@ function update() {
 
 // draw function
 function draw() {
-    cleanCanvas(context)
+    cleanCanvas(mainContext)
 
     // draw walls
-    context.fillStyle = wallColor
+    mainContext.fillStyle = wallColor
     for (let r = 0; r < MAP_HEIGHT; r++) {
         for (let c = 0; c < MAP_WIDTH; c++) {
             if (worldMap[r][c] === 1) {
-                context.fillRect(
+                mainContext.fillRect(
                     c * TILE_SIZE,
                     r * TILE_SIZE,
                     TILE_SIZE,
@@ -158,21 +167,23 @@ function draw() {
     }
 
     // draw player
-    context.fillStyle = playerColor
-    context.beginPath()
-    context.arc(player.x, player.y, 2, 0, Math.PI * 2 )
-    context.fill()
+    mainContext.fillStyle = playerColor
+    mainContext.beginPath()
+    mainContext.arc(player.x, player.y, 2, 0, Math.PI * 2 )
+    mainContext.fill()
 
     // draw player direction line
-    context.strokeStyle = playerLineColor
-    context.beginPath()
-    context.moveTo(player.x, player.y)
-    context.lineTo(
+    mainContext.strokeStyle = playerLineColor
+    mainContext.beginPath()
+    mainContext.moveTo(player.x, player.y)
+    mainContext.lineTo(
         player.x + Math.cos(player.angle) * playerlineLen,
         player.y + Math.sin(player.angle) * playerlineLen
     )
-    context.stroke()
+    mainContext.stroke()
 
+    // draw view canvas border
+    cleanCanvas(viewContext)
     
 }
 

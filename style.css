@@ -9,7 +9,17 @@ body {
     background: linear-gradient(to bottom, #e66465, #9198e5);
 }
 
+.canvas-container {
+    display: flex;
+    gap: 10px;
+}
+
 #main-canvas {
-    width: 800px;
+    width: 400px;
+    height: 400px;
+}
+
+#view-canvas {
+    width: 400px;
     height: 400px;
 }
