@@ -308,6 +308,7 @@ function randomizeMap() {
         for (let c = 1; c < MAP_WIDTH - 1; c++) {
             if (r === Math.floor(player.y / TILE_SIZE) && c === Math.floor(player.x / TILE_SIZE)) {
                 worldMap[r][c] = 0; // ensure player position is empty
+                continue;
             }
             worldMap[r][c] = Math.random() < 0.3 ? 1 : 0; // 30% chance of wall
         }   
