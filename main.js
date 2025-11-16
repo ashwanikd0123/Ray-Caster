@@ -8,6 +8,8 @@ function cleanCanvas(context) {
     context.fillRect(0, 0, WIDTH, HEIGHT)
 }
 
+var fishEyeCorrection = true
+
 // get canvas element
 var mainCanvas = $("#main-canvas")[0]
 var viewCanvas = $("#view-canvas")[0]
@@ -240,7 +242,11 @@ function drawViewContent() {
         const { dist } = castRay(rayAngle); // get distance to wall
 
         // correct fisheye distortion effect
-        const correctedDist = dist * Math.cos(rayAngle - player.angle);
+        var correctedDist = dist * Math.cos(rayAngle - player.angle);
+        if (!fishEyeCorrection) {
+            correctedDist = dist;
+        }
+        
         const lineHeight = (TILE_SIZE * HEIGHT) / correctedDist;
 
         const columnX = ray; // 1 column per ray
@@ -251,7 +257,6 @@ function drawViewContent() {
         viewContext.fillStyle = `rgb(${shade}, ${shade}, ${shade})`;
         viewContext.fillRect(columnX, columnY, 1, columnHeight);
     }
-
 }
 
 // draw function
@@ -271,3 +276,9 @@ function loop() {
 }
 
 loop()
+
+// setting extra listeners
+
+$("#fish-eye-checkbox").change(function() {
+    fishEyeCorrection = this.checked
+})
